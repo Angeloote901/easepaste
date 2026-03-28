@@ -1,7 +1,10 @@
+import path from 'path'
 import Fastify from 'fastify'
 import cookie from '@fastify/cookie'
 import helmet from '@fastify/helmet'
 import cors from '@fastify/cors'
+import rateLimit from '@fastify/rate-limit'
+import staticFiles from '@fastify/static'
 import { logger } from '../logger'
 import { config } from '../config'
 import dbPlugin from './plugins/db'
@@ -10,6 +13,7 @@ import jwtPlugin from './plugins/jwt'
 import s3Plugin from './plugins/s3'
 import { requestIdHook } from './middleware/requestId'
 import { registerAuthRoutes } from './modules/auth/auth.routes'
+import { registerDemoRoutes } from './modules/demo/demo.routes'
 import { registerHealthRoutes } from './health/health.routes'
 import { AppError } from '../shared/types/errors'
 
@@ -19,8 +23,19 @@ export async function buildApp() {
     genReqId: () => crypto.randomUUID(),
   })
 
-  // Security headers
-  await app.register(helmet)
+  // Security headers (must be before static plugin)
+  await app.register(helmet, {
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],   // inline scripts in index.html
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+        connectSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:'],
+      },
+    },
+  })
 
   // CORS
   await app.register(cors, {
@@ -30,6 +45,19 @@ export async function buildApp() {
 
   // Cookie support
   await app.register(cookie)
+
+  // Rate limiting — demo endpoint gets its own tighter limit via route config
+  await app.register(rateLimit, {
+    global: false,  // only apply where explicitly configured
+    redis: undefined,  // will set per-route
+  })
+
+  // Serve public/ as static files (landing page)
+  await app.register(staticFiles, {
+    root: path.join(__dirname, '..', '..', 'public'),
+    prefix: '/',
+    decorateReply: false,
+  })
 
   // Request ID middleware
   app.addHook('onRequest', requestIdHook)
@@ -43,6 +71,7 @@ export async function buildApp() {
   // Routes
   await app.register(registerHealthRoutes)
   await app.register(registerAuthRoutes, { prefix: '/api/auth' })
+  await app.register(registerDemoRoutes, { prefix: '/api/demo' })
 
   // Global error handler — convert AppError and Fastify validation errors to consistent JSON
   app.setErrorHandler((error, _request, reply) => {

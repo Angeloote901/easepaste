@@ -23,6 +23,9 @@ const envSchema = z.object({
     .default('info'),
   BF_MAX_ATTEMPTS: z.coerce.number().default(10),
   BF_WINDOW_SECONDS: z.coerce.number().default(900),
+  ANTHROPIC_API_KEY: z.string().optional(),
+  DEMO_RATE_LIMIT_MAX: z.coerce.number().default(10),
+  DEMO_RATE_LIMIT_WINDOW_MS: z.coerce.number().default(60000),
 })
 
 export type Config = z.infer<typeof envSchema>
