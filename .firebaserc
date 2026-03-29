@@ -1,8 +1,5 @@
 {
   "projects": {
-    "default": "easepaste-a67d7",
-    "easepaste": "easepaste-a67d7"
-  },
-  "targets": {},
-  "etags": {}
+    "default": "easepaste-a67d7"
+  }
 }

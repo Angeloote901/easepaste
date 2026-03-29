@@ -37,7 +37,7 @@ exports.saveProfile = exports.demoFill = void 0;
 const https_1 = require("firebase-functions/v2/https");
 const admin = __importStar(require("firebase-admin"));
 admin.initializeApp();
-exports.demoFill = (0, https_1.onCall)({ cors: ['localhost:5000', 'https://easepaste-a67d7.web.app'] }, async (request) => {
+exports.demoFill = (0, https_1.onCall)(async (request) => {
     const profile = request.data?.profile;
     const document = request.data?.document;
     if (!profile || !document) {
@@ -73,7 +73,7 @@ exports.demoFill = (0, https_1.onCall)({ cors: ['localhost:5000', 'https://easep
     };
     return result;
 });
-exports.saveProfile = (0, https_1.onCall)({ cors: ['localhost:5000', 'https://easepaste-a67d7.web.app'] }, async (request) => {
+exports.saveProfile = (0, https_1.onCall)(async (request) => {
     if (!request.auth) {
         throw new https_1.HttpsError('unauthenticated', 'Must be signed in.');
     }
