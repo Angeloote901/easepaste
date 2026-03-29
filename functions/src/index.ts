@@ -13,7 +13,7 @@ interface FillResponse {
   summary: string
 }
 
-export const demoFill = onCall(async (request: CallableRequest) => {
+export const demoFill = onCall({ cors: ['localhost:5000', 'https://easepaste-a67d7.web.app'] }, async (request: CallableRequest) => {
   const profile  = request.data?.profile  as string | undefined
   const document = request.data?.document as string | undefined
 
@@ -56,7 +56,7 @@ export const demoFill = onCall(async (request: CallableRequest) => {
   return result
 })
 
-export const saveProfile = onCall(async (request: CallableRequest) => {
+export const saveProfile = onCall({ cors: ['localhost:5000', 'https://easepaste-a67d7.web.app'] }, async (request: CallableRequest) => {
   if (!request.auth) {
     throw new HttpsError('unauthenticated', 'Must be signed in.')
   }

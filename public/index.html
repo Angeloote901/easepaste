@@ -443,6 +443,12 @@ import { getFirestore, doc, setDoc,
 import { getFunctions, httpsCallable }                from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-functions.js'
 
 // ── Firebase config — replace with your project's values ──────────────────
+// Import the functions you need from the SDKs you need
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyBkXlfcQZlq94neEmEObazbRGE9bZr29WI",
   authDomain: "easepaste-a67d7.firebaseapp.com",
@@ -452,8 +458,9 @@ const firebaseConfig = {
   appId: "1:559531772920:web:6c13f04ab00eea5d85240d",
   measurementId: "G-73DFQR1M5V"
 };
-// ──────────────────────────────────────────────────────────────────────────
 
+// Initialize Firebase
+// ──────────────────────────────────────────────────────────────────────────
 const app       = initializeApp(firebaseConfig)
 const auth      = getAuth(app)
 const db        = getFirestore(app)
